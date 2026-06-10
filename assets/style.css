@@ -1,0 +1,889 @@
+/*
+ * SPDX-License-Identifier: MIT
+ * Copyright (c) 2026 RenoSeven
+ *
+ * SerialBridge - device configuration stylesheet
+ *
+ * Role
+ *   Layout and component appearance via class selectors.
+ *
+ * Class model
+ *   .stack      vertical layout shell inside .section
+ *   .section    tab card with .title
+ *   .field      label + control row (.text | .select | .area | .checkbox)
+ *   .group      fieldset spacing inside .stack
+ *   .status     read-only name/value grid inside .stack
+ *   .controls   form button row inside .stack
+ *   .actions    system command list inside .stack
+ *   .tablist    tab bar with .indicator and .tab
+ *   .tabpanel   tab content with .error and .section
+ *   .dialog     modal with .message and .controls
+ *
+ * Class tree
+ *   body
+ *   +-- header
+ *   |   +-- .product (.logo, .name, .tagline)
+ *   |   +-- .btn.lang
+ *   +-- main
+ *   |   +-- .tablist
+ *   |   |   +-- .indicator
+ *   |   |   +-- .tab (.icon, .caption)
+ *   |   +-- .tabpanels
+ *   |       +-- .tabpanel
+ *   |           +-- .error
+ *   |           +-- .section
+ *   |               +-- .title
+ *   |               +-- .stack
+ *   |                   +-- .status (.name, .value, .separator)
+ *   |                   +-- .field (.name, .text | .select | .area | .checkbox)
+ *   |                   +-- .group (.hint)
+ *   |                   +-- .controls (.btn)
+ *   |                   +-- .actions (.action > .details, .btn)
+ *   +-- footer
+ *   +-- .dialog (.message, .controls)
+ *
+ * Variables (:root)
+ *   accent, danger, background, foreground, border, overlay, shadow
+ *   degrees: base, muted, faint, subtle, strong; background -deep
+ *   motion: --motion-fast, --motion-normal, --ease-out
+ *   --tab-count matches .tab count in .tablist
+ *
+ * Responsive
+ *   desktop-first; mobile at max-width 600px
+ */
+
+/* --- variables --- */
+
+:root {
+    /* theme colors */
+    --accent: #54c8fa;
+    --accent-muted: #38bdf8;
+    --accent-faint: #38bdf894;
+    --accent-subtle: #38bdf81f;
+    --accent-strong: #38bdf814;
+
+    --danger: #f87171;
+    --danger-muted: #cb4444;
+    --danger-faint: #b83a3a;
+    --danger-subtle: #f8717159;
+    --danger-strong: #f8717114;
+
+    --overlay: #94a3b80a;
+    --overlay-strong: #0408109e;
+
+    --border: #4a5c72;
+    --border-muted: #94a3b82e;
+    --border-strong: #94a3b81a;
+
+    --background: #313e52;
+    --background-muted: #283344;
+    --background-faint: #1b2535;
+    --background-subtle: #111827;
+    --background-deep: #0d1420;
+    --background-strong: #0a0f18;
+
+    --foreground: #ffffff;
+    --foreground-muted: #e7edf5;
+    --foreground-faint: #8494a9;
+    --foreground-subtle: #6b7c93;
+    --foreground-strong: #061018;
+
+    --shadow: #00000024;
+    --shadow-strong: #00000047;
+    --shadow-focus: 0 1px 2px var(--shadow), 0 0 0 1.5px var(--accent-faint);
+
+    /* motion effects */
+    --motion-fast: 0.15s;
+    --motion-normal: 0.3s;
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+    /* runtime hooks */
+    --tab-count: 4;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* --- reset --- */
+
+* {
+    box-sizing: border-box;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+    display: none;
+}
+
+html,
+body {
+    -ms-overflow-style: none;
+}
+
+@supports (scrollbar-width: none) {
+    html,
+    body {
+        scrollbar-width: none;
+    }
+}
+
+/* --- shell --- */
+
+body {
+    width: 100%;
+    max-width: 760px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 36px 24px 56px;
+    overflow-y: auto;
+    background:
+        radial-gradient(ellipse 90% 50% at 50% -10%, var(--accent-strong), transparent 60%), var(--background-strong);
+    background-attachment: fixed;
+    color: var(--foreground-muted);
+    font-family: ui-monospace, 'SF Mono', 'Cascadia Mono', 'JetBrains Mono', 'Consolas', sans-serif;
+    line-height: 1.5;
+}
+
+body:has(> .dialog[open]) {
+    overflow: hidden;
+}
+
+header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'product lang';
+    align-items: start;
+    gap: 8px 16px;
+    margin-bottom: 20px;
+    padding: 0 4px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--border-muted);
+    border-radius: 18px;
+    background: var(--background-subtle);
+    box-shadow: 0 12px 36px var(--shadow-strong);
+}
+
+footer {
+    margin-top: 20px;
+    color: var(--foreground-subtle);
+    font-size: 15px;
+    letter-spacing: 0.02em;
+    text-align: center;
+    opacity: 0.6;
+}
+
+/* --- icon --- */
+
+.sprite {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* --- product --- */
+
+.product {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+        'logo name'
+        'tagline tagline';
+    grid-area: product;
+    align-items: start;
+    min-width: 0;
+    gap: 8px 16px;
+}
+
+.product > .logo {
+    display: block;
+    grid-area: logo;
+    width: 48px;
+    height: 48px;
+    padding: 7px;
+    border: 1px solid var(--border-muted);
+    border-radius: 10px;
+    background: var(--accent-subtle);
+    color: var(--accent-muted);
+}
+
+.product > .name {
+    grid-area: name;
+    align-self: center;
+    margin: 0;
+    color: var(--foreground-muted);
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.product > .tagline {
+    grid-area: tagline;
+    margin: 0;
+    color: var(--foreground-faint);
+    font-size: 15px;
+    line-height: 1.45;
+}
+
+/* --- button --- */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    min-height: 44px;
+    padding: 0;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    transition:
+        background var(--motion-fast) var(--ease-out),
+        transform var(--motion-fast) var(--ease-out),
+        box-shadow var(--motion-fast) var(--ease-out);
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn.primary {
+    background: var(--accent-muted);
+    color: var(--foreground-strong);
+    font-weight: 600;
+}
+
+.btn.primary:hover {
+    background: var(--accent);
+}
+
+.btn.secondary {
+    background: var(--background-muted);
+    color: var(--foreground);
+}
+
+.btn.secondary:hover {
+    background: var(--background);
+}
+
+.btn.danger {
+    background: var(--danger-faint);
+    color: var(--foreground);
+}
+
+.btn.danger:hover {
+    background: var(--danger-muted);
+}
+
+.btn.compact {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 132px;
+}
+
+.btn.lang {
+    display: inline-flex;
+    grid-area: lang;
+    align-self: center;
+    justify-self: end;
+    flex: none;
+    box-sizing: border-box;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    border: 1px solid var(--border-muted);
+    background: var(--background-faint);
+    color: var(--foreground-muted);
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+
+.btn.lang:hover {
+    background: var(--background-muted);
+    color: var(--foreground);
+}
+
+/* --- tablist --- */
+
+.tablist {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(var(--tab-count), 1fr);
+    gap: 0;
+    margin: 16px 16px 0;
+    padding: 4px;
+    border-radius: 12px;
+    background: var(--background-strong);
+}
+
+.tablist .indicator {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    z-index: 0;
+    width: calc((100% - 8px) / var(--tab-count));
+    height: calc(100% - 8px);
+    border-radius: 8px;
+    background: var(--background-faint);
+    box-shadow: 0 1px 2px var(--shadow);
+    pointer-events: none;
+    transform: translateX(0);
+    transition:
+        transform var(--motion-normal) var(--ease-out),
+        box-shadow var(--motion-fast) var(--ease-out);
+}
+
+.tablist:has(> .tab:nth-child(3).active) > .indicator {
+    transform: translateX(100%);
+}
+
+.tablist:has(> .tab:nth-child(4).active) > .indicator {
+    transform: translateX(200%);
+}
+
+.tablist:has(> .tab:nth-child(5).active) > .indicator {
+    transform: translateX(300%);
+}
+
+.tablist .tab {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 46px;
+    margin: 0;
+    padding: 8px 4px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: var(--foreground-faint);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 1.2;
+    white-space: nowrap;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    transition: color var(--motion-fast) var(--ease-out);
+}
+
+.tablist .tab:hover:not(.active) {
+    color: var(--foreground-muted);
+}
+
+.tablist .tab:focus,
+.tablist .tab:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+.tablist .tab .icon {
+    width: 24px;
+    height: 24px;
+    opacity: 0.85;
+    transition:
+        opacity var(--motion-fast) var(--ease-out),
+        color var(--motion-fast) var(--ease-out);
+}
+
+.tablist .tab:hover .icon {
+    opacity: 1;
+}
+
+.tablist .tab .caption {
+    display: block;
+    color: inherit;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+}
+
+.tablist .tab.active {
+    color: var(--foreground-muted);
+    font-weight: 600;
+}
+
+.tablist .tab.active .icon {
+    color: var(--accent-muted);
+    opacity: 1;
+}
+
+/* --- tabpanels --- */
+
+.tabpanels {
+    flex: 1;
+    min-width: 0;
+    padding: 22px;
+}
+
+.tabpanels .tabpanel {
+    display: grid;
+    align-content: start;
+    gap: 14px;
+}
+
+.tabpanel > .error {
+    margin: 0;
+    padding: 16px;
+    border: 1px solid var(--danger-subtle);
+    border-radius: 12px;
+    background: var(--danger-strong);
+    color: var(--danger);
+    font-size: 15px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+/* --- section --- */
+
+.section {
+    display: grid;
+    gap: 1em;
+    padding: 18px 20px;
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    background: var(--overlay);
+    font-size: 15px;
+}
+
+.section > .title {
+    margin: 0;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-strong);
+    color: var(--foreground-faint);
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* --- stack --- */
+
+.stack {
+    display: grid;
+    gap: 1.2em;
+    min-width: 0;
+    margin: 0;
+}
+
+/* --- status --- */
+
+.stack > .status {
+    display: grid;
+    grid-template-columns: 12em minmax(0, 1fr);
+    align-items: baseline;
+    gap: 0.8em 0;
+    min-width: 0;
+    margin: 0;
+}
+
+.stack > .status > .name,
+.field > .name {
+    display: block;
+    margin: 0;
+    color: var(--foreground-faint);
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: 0.01em;
+}
+
+.stack > .status > .value {
+    margin: 0;
+    color: var(--foreground-muted);
+    font-size: 16px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.4;
+    word-break: break-all;
+}
+
+.stack > .status > .value.multiline {
+    white-space: pre-line;
+}
+
+.stack > .status .separator {
+    color: var(--foreground-faint);
+}
+
+/* --- field --- */
+
+.field {
+    display: grid;
+    gap: 0.5em;
+    min-width: 0;
+    margin: 0;
+    font-weight: inherit;
+}
+
+.group {
+    display: grid;
+    gap: 1em;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+.field > .hint {
+    display: block;
+    margin: 0;
+    color: var(--foreground-faint);
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.field :is(.text, .select, .area) {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid var(--border-muted);
+    border-radius: 8px;
+    background: var(--background-deep);
+    color: var(--foreground-muted);
+    font-family: inherit;
+    font-size: 16px;
+    transition:
+        border-color var(--motion-fast) var(--ease-out),
+        background var(--motion-fast) var(--ease-out),
+        box-shadow var(--motion-fast) var(--ease-out);
+}
+
+.field .select {
+    padding-right: 36px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7c93' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 13px center;
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+.field .area {
+    min-height: 265px;
+    line-height: 1.5;
+    word-break: break-all;
+    resize: vertical;
+}
+
+.field :is(.text, .area)::placeholder {
+    color: var(--foreground-subtle);
+    opacity: 0.7;
+}
+
+.field:has(> .checkbox) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 11px;
+    padding: 12px 13px;
+    border: 1px solid var(--border-muted);
+    border-radius: 8px;
+    background: var(--background-deep);
+    cursor: pointer;
+    transition:
+        border-color var(--motion-fast) var(--ease-out),
+        background var(--motion-fast) var(--ease-out),
+        box-shadow var(--motion-fast) var(--ease-out);
+    color: var(--foreground-muted);
+    font-size: 15px;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.field:has(> .checkbox) > .name {
+    flex: 1;
+    order: 2;
+    font-size: 15px;
+    font-weight: 400;
+    color: var(--foreground-muted);
+    letter-spacing: normal;
+    text-transform: none;
+    line-height: 1.4;
+}
+
+.field > .checkbox {
+    --check-opacity: 0;
+    position: relative;
+    flex: 0 0 auto;
+    order: 1;
+    width: 18px;
+    height: 18px;
+    min-width: 18px;
+    margin: 0;
+    border: 2px solid var(--border);
+    border-radius: 5px;
+    background: var(--background-deep);
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    transition:
+        background var(--motion-fast) var(--ease-out),
+        border-color var(--motion-fast) var(--ease-out);
+}
+
+.field > .checkbox::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4px;
+    height: 8px;
+    border-right: 2px solid var(--foreground-strong);
+    border-bottom: 2px solid var(--foreground-strong);
+    opacity: var(--check-opacity);
+    transform: translate(-50%, -58%) rotate(45deg);
+    transition: opacity var(--motion-fast) var(--ease-out);
+}
+
+.field > .checkbox:checked {
+    --check-opacity: 1;
+    border-color: var(--accent-muted);
+    background: var(--accent-muted);
+}
+
+/* --- controls --- */
+
+.stack > .controls {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+}
+
+/* --- actions --- */
+
+.stack > .actions {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.stack > .actions > .action {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--background-deep);
+}
+
+.stack > .actions > .action > .details {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    gap: 3px;
+}
+
+.stack > .actions .details > .title {
+    margin: 0;
+    color: var(--foreground-muted);
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.stack > .actions .details > .desc {
+    margin: 0;
+    color: var(--foreground-faint);
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.stack > .actions > .action > .btn.compact {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 132px;
+}
+
+/* --- dialog --- */
+
+.dialog {
+    width: min(360px, calc(100vw - 2 * 16px));
+    max-height: calc(100vh - 2 * 16px);
+    margin: auto;
+    padding: 22px;
+    overflow: visible;
+    border: 1px solid var(--border-muted);
+    border-radius: 18px;
+    background: var(--background-subtle);
+    box-shadow: 0 12px 36px var(--shadow-strong);
+    color: inherit;
+}
+
+.dialog::backdrop {
+    background: var(--overlay-strong);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+.dialog[open],
+.dialog[open]::backdrop {
+    animation: fade-in var(--motion-fast) var(--ease-out);
+}
+
+.dialog > .message {
+    margin: 0 0 18px;
+    color: var(--foreground-muted);
+    font-size: 16px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.dialog > .controls {
+    display: flex;
+    gap: 10px;
+    margin: 0;
+}
+
+.dialog > .controls .btn {
+    flex: 1;
+}
+
+/* --- states --- */
+
+:is(.btn, .field :is(.text, .select, .area), .field > .checkbox):focus-visible,
+.tablist:has(.tab:focus-visible) > .indicator {
+    outline: none;
+    box-shadow: var(--shadow-focus);
+}
+
+/* --- mobile --- */
+
+@media (max-width: 600px) {
+    /* shell */
+    body {
+        padding: 24px 16px 40px;
+    }
+
+    footer {
+        font-size: 13px;
+    }
+
+    /* product */
+    .product > .name {
+        font-size: 23px;
+    }
+
+    .product > .tagline {
+        font-size: 13px;
+    }
+
+    /* button */
+    .btn {
+        font-size: 14px;
+    }
+
+    /* tablist */
+    .tablist .tab {
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+    }
+
+    /* tabpanels */
+    .tabpanels {
+        padding: 18px 16px;
+    }
+
+    .tabpanel > .error {
+        font-size: 13px;
+    }
+
+    /* section */
+    .section {
+        padding: 16px;
+        font-size: 13px;
+    }
+
+    .section > .title {
+        font-size: 13px;
+    }
+
+    /* status */
+    .stack > .status {
+        grid-template-columns: 8em minmax(0, 1fr);
+    }
+
+    .stack > .status > .name,
+    .field > .name {
+        font-size: 12px;
+    }
+
+    .stack > .status > .value {
+        font-size: 14px;
+    }
+
+    /* field */
+    .field > .hint {
+        font-size: 12px;
+    }
+
+    .field :is(.text, .select, .area) {
+        font-size: 16px;
+    }
+
+    .field:has(> .checkbox) {
+        font-size: 13px;
+    }
+
+    /* actions */
+    .stack > .actions > .action {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .stack > .actions .details > .title {
+        font-size: 14px;
+    }
+
+    .stack > .actions .details > .desc {
+        font-size: 13px;
+    }
+
+    .stack > .actions > .action > .btn.compact {
+        width: 100%;
+        min-width: 0;
+    }
+
+    /* dialog */
+    .dialog > .message {
+        font-size: 14px;
+    }
+}
