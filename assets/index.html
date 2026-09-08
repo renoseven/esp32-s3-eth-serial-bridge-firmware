@@ -1,0 +1,415 @@
+<!doctype html>
+<!--
+  SPDX-License-Identifier: MIT
+  Copyright (c) 2026 RenoSeven
+
+  SerialBridge - device configuration markup
+
+  Role
+    Device configuration page markup.
+    CSS class attributes are styling hooks.
+    Data attributes are logic hooks.
+
+  Document tree
+    body
+    +-- header
+    |   +-- .product
+    |   +-- [data-role=lang-switch]
+    +-- main
+    |   +-- [data-role=tablist]
+    |   +-- [data-role=tabpanels]
+    +-- footer
+    +-- [data-role=dialog]
+    +-- svg.sprite
+
+  data-role
+    lang-switch, tablist, tab-indicator, tab, tabpanels, tabpanel, tabpanel-error
+    block, group-selector, group-hint, dialog, dialog-message
+
+  data-*
+    data-domain, data-group, data-field, data-error, data-action, data-i18n, data-hint
+-->
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        <title>SerialBridge</title>
+        <link
+            rel="icon"
+            type="image/svg+xml"
+            href="data:image/svg+xml,%3Csvg%20xmlns%3D'http://www.w3.org/2000/svg'%20viewBox%3D'0%200%2032%2032'%3E%3Crect%20x%3D'4'%20y%3D'6'%20width%3D'24'%20height%3D'20'%20rx%3D'4'%20fill%3D'%230d1420'%20stroke%3D'%2338bdf8'%20stroke-width%3D'1.5'/%3E%3Cpath%20fill%3D'none'%20stroke%3D'%2338bdf8'%20stroke-width%3D'1.5'%20stroke-linecap%3D'round'%20stroke-linejoin%3D'round'%20d%3D'M10%2013l4%204-4%204'/%3E%3Cpath%20fill%3D'none'%20stroke%3D'%2338bdf8'%20stroke-width%3D'1.5'%20stroke-linecap%3D'round'%20d%3D'M18%2021h6'/%3E%3C/svg%3E"
+        />
+        <link rel="stylesheet" href="/style.css" />
+        <script src="/script.js" defer></script>
+    </head>
+
+    <body>
+        <header>
+            <div class="product">
+                <svg class="logo icon" viewBox="0 0 24 24">
+                    <use href="#logo-icon"></use>
+                </svg>
+                <h1 class="name" data-i18n="productName"></h1>
+                <p class="tagline" data-i18n="productTagline"></p>
+            </div>
+            <button type="button" class="btn lang" data-role="lang-switch" data-i18n="langSwitch"></button>
+        </header>
+
+        <main>
+            <nav class="tablist" data-role="tablist">
+                <div class="indicator" data-role="tab-indicator"></div>
+                <button type="button" class="tab active" data-role="tab">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <use href="#status-icon"></use>
+                    </svg>
+                    <span class="caption" data-i18n="tabStatus"></span>
+                </button>
+                <button type="button" class="tab" data-role="tab">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <use href="#network-icon"></use>
+                    </svg>
+                    <span class="caption" data-i18n="tabNetwork"></span>
+                </button>
+                <button type="button" class="tab" data-role="tab">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <use href="#ssh-icon"></use>
+                    </svg>
+                    <span class="caption" data-i18n="tabSsh"></span>
+                </button>
+                <button type="button" class="tab" data-role="tab">
+                    <svg class="icon" viewBox="0 0 24 24">
+                        <use href="#system-icon"></use>
+                    </svg>
+                    <span class="caption" data-i18n="tabSystem"></span>
+                </button>
+            </nav>
+
+            <div class="tabpanels" data-role="tabpanels">
+                <div class="tabpanel" data-role="tabpanel" data-domain="status">
+                    <p class="error" data-role="tabpanel-error" hidden></p>
+                    <section class="section">
+                        <h2 class="title" data-i18n="statusDeviceTitle"></h2>
+                        <div class="stack" data-role="block">
+                            <dl class="status">
+                                <dt class="name" data-i18n="statusDeviceName"></dt>
+                                <dd class="value" data-field="deviceName"></dd>
+                                <dt class="name" data-i18n="statusDeviceFwVersion"></dt>
+                                <dd class="value" data-field="deviceFwVersion"></dd>
+                                <dt class="name" data-i18n="statusDeviceSdkVersion"></dt>
+                                <dd class="value" data-field="deviceSdkVersion"></dd>
+                                <dt class="name" data-i18n="statusDeviceMemory"></dt>
+                                <dd class="value">
+                                    <span data-field="deviceFreeMem"></span>
+                                    <span class="separator"> / </span>
+                                    <span data-field="deviceTotalMem"></span>
+                                </dd>
+                                <dt class="name" data-i18n="statusDeviceUptime"></dt>
+                                <dd class="value" data-field="deviceUptime"></dd>
+                            </dl>
+                        </div>
+                    </section>
+                    <section class="section">
+                        <h2 class="title" data-i18n="statusWifiTitle"></h2>
+                        <div class="stack" data-role="block">
+                            <dl class="status">
+                                <dt class="name" data-i18n="statusWifiMode"></dt>
+                                <dd class="value" data-field="wifiMode"></dd>
+                                <dt class="name" data-i18n="statusWifiRssi"></dt>
+                                <dd class="value" data-field="wifiRssi"></dd>
+                                <dt class="name" data-i18n="statusWifiMacAddr"></dt>
+                                <dd class="value" data-field="wifiMacAddr"></dd>
+                                <dt class="name" data-i18n="statusWifiIpv4Addr"></dt>
+                                <dd class="value" data-field="wifiIpv4Addr"></dd>
+                                <dt class="name" data-i18n="statusWifiIpv6Addrs"></dt>
+                                <dd class="value multiline" data-field="wifiIpv6Addrs"></dd>
+                            </dl>
+                        </div>
+                    </section>
+                    <section class="section">
+                        <h2 class="title" data-i18n="statusSshTitle"></h2>
+                        <div class="stack" data-role="block">
+                            <dl class="status">
+                                <dt class="name" data-i18n="statusSshHostKey"></dt>
+                                <dd class="value" data-field="sshHostKey"></dd>
+                                <dt class="name" data-i18n="statusSshConnection"></dt>
+                                <dd class="value" data-field="sshConnected"></dd>
+                            </dl>
+                        </div>
+                    </section>
+                </div>
+
+                <div class="tabpanel" data-role="tabpanel" hidden>
+                    <p class="error" data-role="tabpanel-error" hidden></p>
+                    <section class="section" data-domain="device">
+                        <h2 class="title" data-i18n="deviceTitle"></h2>
+                        <form class="stack" data-role="block">
+                            <label class="field">
+                                <span class="name" data-i18n="deviceName"></span>
+                                <input
+                                    class="text"
+                                    name="name"
+                                    autocomplete="off"
+                                    placeholder="SerialBridge"
+                                    data-field="name"
+                                    data-error="configDeviceInvalidName"
+                                />
+                            </label>
+                            <div class="controls">
+                                <button
+                                    type="button"
+                                    class="btn primary"
+                                    data-i18n="deviceSave"
+                                    data-action="save-device"
+                                ></button>
+                                <button
+                                    type="button"
+                                    class="btn secondary"
+                                    data-i18n="deviceReset"
+                                    data-action="reset-device"
+                                ></button>
+                            </div>
+                        </form>
+                    </section>
+                    <section class="section" data-domain="wifi">
+                        <h2 class="title" data-i18n="wifiTitle"></h2>
+                        <form class="stack" data-role="block">
+                            <label class="field">
+                                <span class="name" data-i18n="wifiPrefMode"></span>
+                                <select
+                                    class="select"
+                                    name="prefMode"
+                                    data-role="group-selector"
+                                    data-field="prefMode"
+                                    data-error="configWifiInvalidPrefMode"
+                                >
+                                    <option value="off" data-i18n="wifiModeOff"></option>
+                                    <option value="sta" data-i18n="wifiModeSta" data-hint="wifiModeStaHint"></option>
+                                    <option
+                                        value="ap"
+                                        selected
+                                        data-i18n="wifiModeAp"
+                                        data-hint="wifiModeApHint"
+                                    ></option>
+                                </select>
+                                <span class="hint" data-role="group-hint"></span>
+                            </label>
+                            <fieldset class="group" data-role="block" data-group="ap" hidden>
+                                <label class="field">
+                                    <span class="name" data-i18n="wifiApSsid"></span>
+                                    <input
+                                        class="text"
+                                        name="apSsid"
+                                        autocomplete="username"
+                                        placeholder="SerialBridge"
+                                        data-field="apSsid"
+                                        data-error="configWifiInvalidSsid"
+                                    />
+                                </label>
+                                <label class="field">
+                                    <span class="name" data-i18n="wifiApPassword"></span>
+                                    <input
+                                        class="text"
+                                        name="apPassword"
+                                        type="password"
+                                        autocomplete="new-password"
+                                        data-field="apPassword"
+                                        data-error="configWifiInvalidPassword"
+                                    />
+                                </label>
+                            </fieldset>
+                            <fieldset class="group" data-role="block" data-group="sta" hidden>
+                                <label class="field">
+                                    <span class="name" data-i18n="wifiStaSsid"></span>
+                                    <input
+                                        class="text"
+                                        name="staSsid"
+                                        autocomplete="username"
+                                        placeholder="ExampleNetwork"
+                                        data-field="staSsid"
+                                        data-error="configWifiInvalidSsid"
+                                    />
+                                </label>
+                                <label class="field">
+                                    <span class="name" data-i18n="wifiStaPassword"></span>
+                                    <input
+                                        class="text"
+                                        name="staPassword"
+                                        type="password"
+                                        autocomplete="current-password"
+                                        data-field="staPassword"
+                                        data-error="configWifiInvalidPassword"
+                                    />
+                                </label>
+                            </fieldset>
+                            <div class="controls">
+                                <button
+                                    type="button"
+                                    class="btn primary"
+                                    data-i18n="wifiSave"
+                                    data-action="save-wifi"
+                                ></button>
+                                <button
+                                    type="button"
+                                    class="btn secondary"
+                                    data-i18n="wifiReset"
+                                    data-action="reset-wifi"
+                                ></button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+
+                <div class="tabpanel" data-role="tabpanel" hidden>
+                    <p class="error" data-role="tabpanel-error" hidden></p>
+                    <section class="section" data-domain="ssh">
+                        <h2 class="title" data-i18n="sshTitle"></h2>
+                        <form class="stack" data-role="block">
+                            <label class="field">
+                                <span class="name" data-i18n="sshUsername"></span>
+                                <input
+                                    class="text"
+                                    name="username"
+                                    autocomplete="username"
+                                    placeholder="admin"
+                                    data-field="username"
+                                    data-error="configSshInvalidUsername"
+                                />
+                            </label>
+                            <label class="field">
+                                <span class="name" data-i18n="sshPassword"></span>
+                                <input
+                                    class="text"
+                                    name="password"
+                                    type="password"
+                                    autocomplete="new-password"
+                                    data-field="password"
+                                    data-error="configSshInvalidPassword"
+                                />
+                            </label>
+                            <label class="field">
+                                <span class="name" data-i18n="sshAuthorizedKey"></span>
+                                <textarea
+                                    class="area"
+                                    name="authorizedKey"
+                                    placeholder="ssh-ed25519 AAAA..."
+                                    data-field="authorizedKey"
+                                    data-error="configSshInvalidAuthorizedKey"
+                                ></textarea>
+                            </label>
+                            <label class="field">
+                                <span class="name" data-i18n="sshAllowNoAuth"></span>
+                                <input
+                                    type="checkbox"
+                                    class="checkbox"
+                                    name="allowNoAuth"
+                                    data-field="allowNoAuth"
+                                    data-error="configSshInvalidAllowNoAuth"
+                                />
+                            </label>
+                            <div class="controls">
+                                <button
+                                    type="button"
+                                    class="btn primary"
+                                    data-i18n="sshSave"
+                                    data-action="save-ssh"
+                                ></button>
+                                <button
+                                    type="button"
+                                    class="btn secondary"
+                                    data-i18n="sshReset"
+                                    data-action="reset-ssh"
+                                ></button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+
+                <div class="tabpanel" data-role="tabpanel" hidden>
+                    <p class="error" data-role="tabpanel-error" hidden></p>
+                    <section class="section" data-domain="system">
+                        <h2 class="title" data-i18n="systemTitle"></h2>
+                        <div class="stack" data-role="block">
+                            <ul class="actions">
+                                <li class="action">
+                                    <div class="details">
+                                        <h3 class="title" data-i18n="systemReboot"></h3>
+                                        <p class="desc" data-i18n="systemRebootDescription"></p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn secondary compact"
+                                        data-i18n="systemRebootAction"
+                                        data-action="reboot-system"
+                                    ></button>
+                                </li>
+                                <li class="action">
+                                    <div class="details">
+                                        <h3 class="title" data-i18n="systemFactoryReset"></h3>
+                                        <p class="desc" data-i18n="systemFactoryResetDescription"></p>
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="btn danger compact"
+                                        data-i18n="systemFactoryResetAction"
+                                        data-action="reset-factory"
+                                    ></button>
+                                </li>
+                            </ul>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <footer>SerialBridge - Copyright (c) 2026 RenoSeven</footer>
+
+        <dialog class="dialog" data-role="dialog">
+            <p class="message" data-role="dialog-message"></p>
+            <div class="controls">
+                <button
+                    type="button"
+                    class="btn primary"
+                    data-i18n="dialogConfirm"
+                    data-action="dialog-confirm"
+                ></button>
+                <button
+                    type="button"
+                    class="btn secondary"
+                    data-i18n="dialogCancel"
+                    data-action="dialog-cancel"
+                ></button>
+            </div>
+        </dialog>
+
+        <svg xmlns="http://www.w3.org/2000/svg" class="sprite">
+            <symbol id="logo-icon" viewBox="0 0 24 24">
+                <rect x="3" y="4" width="18" height="16" rx="3"></rect>
+                <path d="M7 9l3 3-3 3"></path>
+                <path d="M13 15h4"></path>
+            </symbol>
+            <symbol id="status-icon" viewBox="0 0 24 24">
+                <path d="M3 12h3.5l2.5 7 4-14 2.5 7H21"></path>
+            </symbol>
+            <symbol id="network-icon" viewBox="0 0 24 24">
+                <path d="M4 9.5a12 12 0 0 1 16 0"></path>
+                <path d="M7 13a8 8 0 0 1 10 0"></path>
+                <path d="M9.5 16.5a4 4 0 0 1 5 0"></path>
+                <circle cx="12" cy="19.5" r="0.6"></circle>
+            </symbol>
+            <symbol id="ssh-icon" viewBox="0 0 24 24">
+                <circle cx="8" cy="15" r="3.2"></circle>
+                <path d="M10.3 12.7l7.2-7.2"></path>
+                <path d="M14.5 8.5l2.2 2.2"></path>
+                <path d="M17 6l2.2 2.2"></path>
+            </symbol>
+            <symbol id="system-icon" viewBox="0 0 24 24">
+                <path d="M5 7h14"></path>
+                <path d="M5 12h14"></path>
+                <path d="M5 17h14"></path>
+                <circle cx="9" cy="7" r="2"></circle>
+                <circle cx="15" cy="12" r="2"></circle>
+                <circle cx="9" cy="17" r="2"></circle>
+            </symbol>
+        </svg>
+    </body>
+</html>

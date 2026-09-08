@@ -1,0 +1,3 @@
+-Iinclude
+-fno-exceptions
+-DCONFIG_ASYNC_TCP_RUNNING_CORE=0

@@ -1,0 +1,34 @@
+# Build / generated
+.cache
+compile_commands.json
+include/web/assets.h
+src/web/assets.cpp
+
+# Python
+.venv
+__pycache__
+
+# ruff
+.ruff_cache
+ruff.toml
+
+# clang-format / clangd
+.clang-format
+.clangd
+
+# eslint
+.eslintcache
+eslint.config.mjs
+
+# prettier
+.prettierignore
+.prettierrc.json
+
+# npm
+.npmrc
+node_modules/
+package-lock.json
+/package.json
+
+# vscode
+.vscode
